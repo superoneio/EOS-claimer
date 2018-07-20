@@ -17,6 +17,7 @@ cacheRewards();
 setInterval(cacheRewards, 10 * 60 * 1000 + 5000);
 //////////////////////////
 function cacheRewards() {
+    console.log("try to calculate if it is good time to claim reward")
     Promise.all([getGlobal(), getProducer(producerName)]).then(([global, producer]) => {
         let bpay = (global.perblock_bucket * producer.unpaid_blocks) / global.total_unpaid_blocks / 10000;
         let vpay = (global.pervote_bucket * producer.total_votes) / (1 * global.total_producer_vote_weight) / 10000;
