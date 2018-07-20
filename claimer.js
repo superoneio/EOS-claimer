@@ -17,7 +17,7 @@ cacheRewards();
 setInterval(cacheRewards, 10 * 60 * 1000 + 5000);
 //////////////////////////
 function cacheRewards() {
-    console.log("try to calculate if it is good time to claim reward")
+    console.log('try to calculate if it is good time to claim reward',new Date())
     Promise.all([getGlobal(), getProducer(producerName)]).then(([global, producer]) => {
         let bpay = (global.perblock_bucket * producer.unpaid_blocks) / global.total_unpaid_blocks / 10000;
         let vpay = (global.pervote_bucket * producer.total_votes) / (1 * global.total_producer_vote_weight) / 10000;
@@ -26,13 +26,13 @@ function cacheRewards() {
         }
         let next_claim_time = 1 * producer.last_claim_time / 1000 + 24 * 60 * 60 * 1000;
         if (next_claim_time > Date.now()) {
-            console.log('it is not a good time to claim:',new Date().Format("yyyy-MM-dd HH:mm:ss"))
+            console.log('it is not a good time to claim:',new Date())
             return 0;
         }
         return bpay + vpay;
     }).then(rewards => {
         if (rewards > 0) {
-            console.log('it is time to claim reward:',new Date().Format("yyyy-MM-dd HH:mm:ss"))
+            console.log('it is time to claim reward',new Date(),)
             eos.transaction({
                 // ...headers,
                 actions: [
