@@ -26,13 +26,13 @@ function cacheRewards() {
         }
         let next_claim_time = 1 * producer.last_claim_time / 1000 + 24 * 60 * 60 * 1000;
         if (next_claim_time > Date.now()) {
-            console.log('it is not a good time to claim:',Date.now())
+            console.log('it is not a good time to claim:',new Date().Format("yyyy-MM-dd HH:mm:ss"))
             return 0;
         }
         return bpay + vpay;
     }).then(rewards => {
-        console.log('it is time to claim reward:',Date.now())
         if (rewards > 0) {
+            console.log('it is time to claim reward:',new Date().Format("yyyy-MM-dd HH:mm:ss"))
             eos.transaction({
                 // ...headers,
                 actions: [
