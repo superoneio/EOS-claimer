@@ -23,7 +23,8 @@ function cacheRewards() {
         if (vpay < 100) {
             vpay = 0;
         }
-        let next_claim_time = 1 * producer.last_claim_time / 1000 + 24 * 60 * 60 * 1000;
+        let last_time = Date.parse(producer.last_claim_time + "Z");
+        let next_claim_time = 1 * last_time / 1000 + 24 * 60 * 60 * 1000;
         if (next_claim_time > Date.now()) {
             return 0;
         }
