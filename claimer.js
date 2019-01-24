@@ -5,7 +5,7 @@ let schedule = require("node-schedule");
 let eos = Eos({
     httpEndpoint: config.httpEndPoint,
     chainId: config.chainId,
-    keyProvider: config.wif
+    keyProvider: config.wif,
     authorization: [{	
         actor: config.producerName,	
         permission: config.permission	
