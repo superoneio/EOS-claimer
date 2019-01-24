@@ -1,106 +1,22 @@
-const Eos = require('eosjs');
-const config = require('./config.json');
-const httpEndPoint = config.httpEndPoint;
-const chainId = config.chainId;
-const wif = config.wif;
-const producerName = config.producerName;
-const permission = config.permission;
+let Eos = require('eosjs');
+let config = require('./config.json');
+let schedule = require("node-schedule");
 
-var eos = Eos({
-    httpEndpoint: httpEndPoint, chainId: chainId,
-    keyProvider: wif
+let eos = Eos({
+    httpEndpoint: config.httpEndPoint,
+    chainId: config.chainId,
+    keyProvider: config.wif
 });
 
+schedule.scheduleJob('0 * * * * *', function () {
+    claimReward(config.producerName)
+})
 
-cacheRewards();
-//try every 10 min
-setInterval(cacheRewards, 10 * 60 * 1000 + 5000);
-//////////////////////////
-function cacheRewards() {
-    console.log('try to calculate if it is good time to claim reward',new Date())
-    Promise.all([getGlobal(), getProducer(producerName)]).then(([global, producer]) => {
-        let bpay = (global.perblock_bucket * producer.unpaid_blocks) / global.total_unpaid_blocks / 10000;
-        let vpay = (global.pervote_bucket * producer.total_votes) / (1 * global.total_producer_vote_weight) / 10000;
-        if (vpay < 100) {
-            vpay = 0;
-        }
-        let last_time = Date.parse(producer.last_claim_time + "Z");
-        let next_claim_time = 1 * last_time + 24 * 60 * 60 * 1000;
-        console.log("now:", Date.now());
-        console.log("next_claim_time:", next_claim_time);
-        if (next_claim_time > Date.now()) {
-            console.log('it is not a good time to claim:',new Date())
-            return 0;
-        }
-        return bpay + vpay;
-    }, errs => {
-        console.error(errs);
-        //retry
-        cacheRewards();
-    }).then(rewards => {
-        console.log("current rewards:", rewards);
-        if (rewards > 0) {
-            console.log('it is time to claim reward',new Date(),)
-            eos.transaction({
-                // ...headers,
-                actions: [
-                    {
-                        account: 'eosio',
-                        name: 'claimrewards',
-                        authorization: [{
-                            actor: producerName,
-                            permission: permission
-                        }],
-                        data: {
-                            owner: producerName
-                        }
-                    }
-                ]
-            }).then(res => {
-                console.log(res);
-            }, err => {
-                console.error(err);
-                //retry
-                cacheRewards();
-            });
-        }
-    });
+async function claimReward(bp) {
+    try{
+        let result = await eos.claimrewards(bp)
+        console.log("be a rich man !!!")
+    }catch(e){
+        console.log('hey ~,it is not your time')
+    }
 }
-
-function getGlobal() {
-    return new Promise((resolve, reject) => {
-        eos.getTableRows({
-            "scope": "eosio",
-            "code": "eosio",
-            "table": "global",
-            "json": true
-        }).then(res => {
-            resolve(res.rows[0]);
-        }, err => {
-            console.error(err);
-            reject(err);
-        });
-    });
-}
-
-function getProducer(name) {
-    return new Promise((resolve, reject) => {
-        eos.getTableRows({
-            "scope": "eosio",
-            "code": "eosio",
-            "table": "producers",
-            "lower_bound": name,
-            "limit": 1,
-            "json": true
-        }).then(res => {
-            if (!res.rows[0] || name != res.rows[0].owner) {
-                reject("producer not exist!");
-            }
-            resolve(res.rows[0]);
-        }, err => {
-            console.error(err);
-            reject(err);
-        });
-    });
-}
-
