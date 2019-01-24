@@ -15,8 +15,8 @@ schedule.scheduleJob('0 * * * * *', function () {
 async function claimReward(bp) {
     try{
         let result = await eos.claimrewards(bp)
-        console.log("be a rich man !!!")
+        console.log("be a rich man !!!",result)
     }catch(e){
-        console.log('hey ~,it is not your time')
+        console.log('hey ~,it is not your turn yet ):')
     }
 }
