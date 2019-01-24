@@ -6,6 +6,10 @@ let eos = Eos({
     httpEndpoint: config.httpEndPoint,
     chainId: config.chainId,
     keyProvider: config.wif
+    authorization: [{	
+        actor: config.producerName,	
+        permission: config.permission	
+    }]
 });
 
 schedule.scheduleJob('0 * * * * *', function () {
