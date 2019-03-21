@@ -21,6 +21,6 @@ async function claimReward(bp) {
         let result = await eos.claimrewards(bp)
         console.log("be a rich man !!!",result)
     }catch(e){
-        console.log('hey ~,it is not your turn yet ):')
+        console.log('hey ~,it is not your turn yet ):',e)
     }
 }
