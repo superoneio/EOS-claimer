@@ -1,13 +1,13 @@
 {
 	"apps": [{
 			"name": "claimer",
-			"script": "./claimer.js",
-			"node_args": "--max_old_space_size= 1G",
+			"script": "./src/claimer.js",
+			"node_args": "--max_old_space_size=1024",
 			"exec_mode": "fork",
 			"max_memory_restart": "512M",
 			"autorestart": true,
 			"merge_logs": true,
-			"watch": ["./"],
+			"watch": ["src"],
 			"watch_options": {
 				"usePolling": true
 			},

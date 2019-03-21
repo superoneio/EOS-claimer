@@ -1,5 +1,5 @@
 let Eos = require('eosjs');
-let config = require('./config.json');
+let config = require('../config.json');
 let schedule = require("node-schedule");
 
 let eos = Eos({
